@@ -75,17 +75,9 @@ namespace JSON
                 Console.WriteLine(genre);
             }
 
-            JArray array = new JArray();
-            array.Add("Manual text");
-            array.Add(new DateTime(2000, 5, 23));
-
-            JObject obj = new JObject();
-            obj["MyArray"] = array;
-
-            json = obj.ToString();
-
-            Console.WriteLine(json);
+            Linq2Json();
             Console.ReadKey();
+
         }
 
         private static void WriteJson2Disc(string jsonOutput)
@@ -98,6 +90,21 @@ namespace JSON
         {
             sw.Flush();
             sw.Close();
+        }
+
+        private static void Linq2Json()
+        {
+
+            JArray array = new JArray();
+            array.Add("Manual text");
+            array.Add(new DateTime(2000, 5, 23));
+
+            JObject obj = new JObject();
+            obj["MyArray"] = array;
+
+            string json = obj.ToString();
+
+            Console.WriteLine(json);
         }
     }
 }

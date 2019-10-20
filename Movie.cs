@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace JSON
 {
@@ -6,7 +7,7 @@ namespace JSON
     {
         public string Name { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public string[] Genres { get; set; }
+        public IList<string> Genres { get; set; }
     }
 }
 
