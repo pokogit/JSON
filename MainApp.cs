@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Reflection;
+using JSON.Classes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -70,6 +71,12 @@ namespace JSON
             // Empty e = JsonConvert.DeserializeObject<Empty>(movieData);
 
             Linq2Json();
+
+            //SerializeObject();
+            //SerializeConditionalProperty();
+            //ConstructorHandling();
+            Kreditkarte();
+
             Console.ReadKey();
 
         }
@@ -133,5 +140,96 @@ namespace JSON
 
             return car;
         }
+
+        private static void SerializeObject()
+        {
+            List<string> videogames = new List<string>
+            {
+                "Starcraft",
+                "Halo",
+                "Legend of Zelda"
+            };
+
+            string json = JsonConvert.SerializeObject(videogames);
+
+            WriteJsonOutputToConsole(MethodBase.GetCurrentMethod().ToString(), json);
+        }
+
+        private static void SerializeConditionalProperty()
+        {
+            Employee joe = new Employee();
+            joe.Name = "Joe Employee";
+            Employee mike = new Employee();
+            mike.Name = "Mike Manager";
+
+            joe.Manager = mike;
+
+            // mike is his own manager
+            // ShouldSerialize will skip this property
+            mike.Manager = mike;
+
+            string json = JsonConvert.SerializeObject(new[] { joe, mike }, Formatting.Indented);
+
+            WriteJsonOutputToConsole(MethodBase.GetCurrentMethod().ToString(), json);
+
+        }
+
+        private static void ConstructorHandling()
+        {
+            string json = @"{'Url':'http://www.google.com'}";
+
+            //try
+            //{
+            //    JsonConvert.DeserializeObject<Website>(json);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //    // Value cannot be null.
+            //    // Parameter name: website
+            //}
+
+            try
+            {
+                Website website = JsonConvert.DeserializeObject<Website>(json, 
+                    new JsonSerializerSettings { ConstructorHandling = Newtonsoft.Json.ConstructorHandling.AllowNonPublicDefaultConstructor });
+
+                Console.WriteLine(website.Url);
+                Console.ReadKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Kreditkarte()
+        {
+            Kreditkarte kreditkarte = new Kreditkarte();
+            Inhaber inhaber = new Inhaber();
+
+            kreditkarte.Herausgeber = "XEMA";
+            kreditkarte.Nummer = "1234-5678-9012-3456";
+            kreditkarte.Deckung = 2e+6;
+            kreditkarte.Waehrung = "EURO";
+            inhaber.Name = "Mustermann";
+            inhaber.Vorname = "Max";
+            inhaber.Maennlich = true;
+            inhaber.Hobbys = new string[] { "Reiten", "Golfen", "Lesen" };
+            inhaber.Alter = 42;
+            inhaber.Kinder = new int[] { };
+            kreditkarte.Inhaber = inhaber;
+            string json = JsonConvert.SerializeObject(kreditkarte, Formatting.Indented);
+            WriteJsonOutputToConsole(MethodBase.GetCurrentMethod().ToString(), json);
+        }
+
+
+
+        private static void WriteJsonOutputToConsole(string methodName, string result)
+        {
+            Console.WriteLine(string.Format("{0} --> {1}{2}", methodName, Environment.NewLine, result));
+            Console.ReadKey();
+        }
+
     }
 }
