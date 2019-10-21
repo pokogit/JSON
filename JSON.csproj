@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="Car.cs" />
+    <Compile Include="Empty.cs" />
     <Compile Include="MainApp.cs" />
     <Compile Include="Movie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

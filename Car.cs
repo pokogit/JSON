@@ -11,5 +11,6 @@ namespace JSON
         public bool HasWheels { get; set; }
         public decimal Price { get; set; }
         public double NumberOfKilometers { get; set; }
+        public int? NullValue { get; set; }
     }
 }

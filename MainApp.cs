@@ -21,7 +21,8 @@ namespace JSON
                 Sizes = new string[] { "Small", "Medium", "Large" },
                 HasWheels = true,
                 Price = 17000M,
-                NumberOfKilometers = 4888
+                NumberOfKilometers = 4888,
+                NullValue = null
             };
 
             Account account = new Account
@@ -46,43 +47,36 @@ namespace JSON
 
             Car deserializedProduct = JsonConvert.DeserializeObject<Car>(jsonOutput);
 
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Converters.Add(new JavaScriptDateTimeConverter());
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-            serializer.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+            // WriteJsonFile(car);
+            car = ReadJsonFile();
+           
 
-            using (StreamWriter sw = new StreamWriter(@"c:\temp\json.txt"))
-            using (JsonWriter writer = new JsonTextWriter(sw))
-            {
-                serializer.Serialize(writer, car);
-                // {"ExpiryDate":new Date(1230375600000),"Price":0}
-            }
 
-            string json = @"{
-              'Name': 'Bad Boys',
-              'ReleaseDate': '1995-4-7T00:00:00',
-              'Genres': [
-                'Action',
-                'Comedy'
-                  ]
-                }";
+            string movieData = @"{
+            'Name': 'Bad Boys',
+            'ReleaseDate': '1995-4-7T00:00:00',
+            'Genres': [
+            'Action',
+            'Comedy'
+                ]
+            }";
 
-            Movie m = JsonConvert.DeserializeObject<Movie>(json);
+            Movie m = JsonConvert.DeserializeObject<Movie>(movieData);
             Console.WriteLine(m.Name);
             Console.WriteLine(m.ReleaseDate);
             foreach (var genre in m.Genres)
-            {
                 Console.WriteLine(genre);
-            }
+
+            // Empty e = JsonConvert.DeserializeObject<Empty>(movieData);
 
             Linq2Json();
             Console.ReadKey();
 
         }
-
+       
         private static void WriteJson2Disc(string jsonOutput)
         {
-            sw = new StreamWriter(@"c:\temp\output.json");
+            sw = new StreamWriter(@"T:\PP\json\output.json");
             sw.Write(jsonOutput);
         }
 
@@ -92,12 +86,17 @@ namespace JSON
             sw.Close();
         }
 
+        /// <summary>
+        /// Convert LINQ to JSON
+        /// </summary>
         private static void Linq2Json()
         {
 
-            JArray array = new JArray();
-            array.Add("Manual text");
-            array.Add(new DateTime(2000, 5, 23));
+            JArray array = new JArray
+            {
+                "Manual text",
+                new DateTime(2000, 5, 23)
+            };
 
             JObject obj = new JObject();
             obj["MyArray"] = array;
@@ -105,6 +104,34 @@ namespace JSON
             string json = obj.ToString();
 
             Console.WriteLine(json);
+        }
+
+        private static void WriteJsonFile(Car car)
+        {
+            // Way 1
+            File.WriteAllText(@"c:\movie.json", JsonConvert.SerializeObject(car));
+
+            // Way 2
+            using (StreamWriter file = File.CreateText(@"c:\movie.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, car);
+            }
+        }
+
+        private static Car ReadJsonFile()
+        {
+            // Way 1
+            Car car = JsonConvert.DeserializeObject<Car>(File.ReadAllText(@"T:\PP\json\output.json"));
+
+            // Way 2
+            using (StreamReader sr = File.OpenText(@"T:\PP\json\output.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                Car car2 = (Car)serializer.Deserialize(sr, typeof(Car));
+            }
+
+            return car;
         }
     }
 }
